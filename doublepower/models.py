@@ -1,3 +1,7 @@
 from django.db import models
 
-# Create your models here.
+
+class Player(models.Model):
+    name = models.TextField(default='')
+    forehand_strength = models.IntegerField(default=50)
+    backhand_strength = models.IntegerField(default=50)
