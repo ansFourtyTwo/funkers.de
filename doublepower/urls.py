@@ -19,5 +19,6 @@ from . import views
 
 app_name = 'doublepower'
 urlpatterns = [
-    path('', views.home, name='home')
+    path('', views.home, name='home'),
+    path('player/new', views.new_player, name='new_player'),
 ]

@@ -6,7 +6,11 @@
 </head>
 <body>
     <h1>Doublepower</h1>
-
+    <form method="POST" action="{% url 'doublepower:new_player' %}">
+        {% csrf_token %}
+        {{ player_form }}
+        <input type="submit" value="Submit">
+    </form>
 
 </body>
 </html>
