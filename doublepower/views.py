@@ -27,6 +27,7 @@ def new_team(request):
     player_form = PlayerForm(data=request.POST)
     if player_form.is_valid():
         team = Team.objects.create()
+        player_form.save(team=team)
         return redirect(team)
 
 

@@ -4,6 +4,11 @@ from doublepower.models import Player
 
 
 class PlayerForm(forms.ModelForm):
+
+    def save(self, team):
+        self.instance.team = team
+        return super().save(self)
+
     class Meta:
         model = Player
         fields = ('name', 'forehand_strength', 'backhand_strength',)

@@ -6,9 +6,17 @@ from doublepower.models import Player, Team
 class PlayerModelTest(TestCase):
 
     def test_can_save_player(self):
-        player = Player()
+        team = Team.objects.create()
+        player = Player(team=team)
         player.save()
         self.assertEqual(Player.objects.first(), player)
+
+    def test_player_is_associated_to_team(self):
+        team = Team.objects.create()
+        player = Player()
+        player.team = team
+        player.save()
+        self.assertIn(player, team.player_set.all())
 
     def test_default_player_name(self):
         player = Player()
