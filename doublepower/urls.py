@@ -21,4 +21,6 @@ app_name = 'doublepower'
 urlpatterns = [
     path('', views.home, name='home'),
     path('player/new', views.new_player, name='new_player'),
+    path('team/new', views.new_team, name='new_team'),
+    path('team/<int:team_id>', views.view_team, name='view_team'),
 ]
