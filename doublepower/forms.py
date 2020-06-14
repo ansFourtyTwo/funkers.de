@@ -10,5 +10,15 @@ class PlayerForm(forms.ModelForm):
         widgets = {
             'name': forms.fields.TextInput(attrs={
                 'placeholder': 'Please enter a player name'
+            }),
+            'forehand_strength': forms.fields.NumberInput(attrs={
+                'min': 0,
+                'max': 100,
+                'step': 1,
+            }),
+            'backhand_strength': forms.fields.NumberInput(attrs={
+                'min': 0,
+                'max': 100,
+                'step': 1,
             })
         }
