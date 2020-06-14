@@ -21,52 +21,74 @@ class NewVisitorTest(FunctionalTest):
 
         # To enter a new player he finds a textfield where he can enter the
         # name of the player
-        input_player_name = self.browser.find_element_by_id('id_player_name')
+        input_player_name = self.browser.find_element_by_id('id_name')
         self.assertEqual(
             input_player_name.get_attribute('placeholder'),
-            "Please enter the player's name"
+            "Please enter a player name"
         )
         input_player_name.send_keys('Novac Djocovic')
-        input.player_name.send_keys(Keys.ENTER)
 
-        # Also he finds a vertical slider with values from 0 to 100 with step
-        # size 1 and default to 50, where he can set the player's strength
-        # for the forehand side
+        # Also he finds a form for numerical input to enter the forehand
+        # strength of the player
         input_forehand_strength = self.browser.find_element_by_id(
             'id_forehand_strength')
-        self.assertEqual(input_forehand_strength.get_attribute('min'), 0)
-        self.assertEqual(input_forehand_strength.get_attribute('max'), 100)
-        self.assertEqual(input_forehand_strength.get_attribute('step'), 1)
-        self.assertEqual(input_forehand_strength.get_attribute('value'), 50)
 
         # He adjusts the strength by 30 to 80 for the forehand
         for i in range(30):
-            input_forehand_strength.send_keys(Keys.ARROW_RIGHT)
+            input_forehand_strength.send_keys(Keys.ARROW_UP)
 
         # Same as for the forehand side is available for the backhand side
         input_backhand_strength = self.browser.find_element_by_id(
             'id_backhand_strength')
-        self.assertEqual(input_backhand_strength.get_attribute('min'), 0)
-        self.assertEqual(input_backhand_strength.get_attribute('max'), 100)
-        self.assertEqual(input_backhand_strength.get_attribute('step'), 1)
-        self.assertEqual(input_backhand_strength.get_attribute('value'), 50)
 
         # He adjusts the strength by 40 to 90 for the backhand
         for i in range(40):
-            input_backhand_strength.send_keys(Keys.ARROW_RIGHT)
+            input_backhand_strength.send_keys(Keys.ARROW_UP)
 
         # He clicks the submit button to finish the first player
-        submit_button = self.browser.find_element_by_class_name("submit")
+        submit_button = self.browser.find_element_by_xpath(
+            "//input[@type='submit' and @value='Submit']"
+        )
         submit_button.click()
+
+        # He notices that he got redirected to a unique URL for viewing the
+        # complete team
+        current_url = self.browser.current_url
+        self.assertRegex(current_url, r'/team/\d+')
 
         # After submission of the first player he can see the player's
         # information in a table below. The table also contains a rank
+        self.wait_for_row_in_player_table('Novac Djocovic')
 
         # The player is listed at rank #1 as no other player is entered.
 
-        # Simon starts to enter a second player
+        # Simon notices that the form for entering new players is still
+        # there and starts to enter a second player
+        input_player_name = self.browser.find_element_by_id('id_name')
+        input_player_name.send_keys('Roger Federer')
+        input_forehand_strength = self.browser.find_element_by_id(
+            'id_forehand_strength')
 
-        self.fail("Finish the test")
+        for i in range(45):
+            input_forehand_strength.send_keys(Keys.ARROW_UP)
+
+        input_backhand_strength = self.browser.find_element_by_id(
+            'id_backhand_strength')
+
+        for i in range(30):
+            input_backhand_strength.send_keys(Keys.ARROW_UP)
+
+        # He clicks the submit button to finish the second player
+        submit_button = self.browser.find_element_by_xpath(
+            "//input[@type='submit' and @value='Submit']"
+        )
+        submit_button.click()
+
+        # He notices that this player also appears on the table
+
+        # Satisfied Simon goes to sleep
+
+
 
 
 
