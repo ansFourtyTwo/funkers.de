@@ -58,7 +58,7 @@ class NewVisitorTest(FunctionalTest):
 
         # After submission of the first player he can see the player's
         # information in a table below. The table also contains a rank
-        self.wait_for_row_in_player_table('Novac Djocovic')
+        self.wait_for_row_in_player_table('1 Novac Djocovic 80 90')
 
         # The player is listed at rank #1 as no other player is entered.
 
@@ -85,6 +85,7 @@ class NewVisitorTest(FunctionalTest):
         submit_button.click()
 
         # He notices that this player also appears on the table
+        self.wait_for_row_in_player_table('2 Roger Federer 95 80')
 
         # Satisfied Simon goes to sleep
 

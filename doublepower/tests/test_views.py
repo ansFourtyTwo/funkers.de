@@ -18,7 +18,7 @@ class HomeTest(TestCase):
 
     def test_can_save_a_POST_request(self):
         response = self.client.post(
-            reverse('doublepower:new_player'),
+            reverse('doublepower:new_team'),
             data={
                 'name': 'Roger',
                 'forehand_strength': 98,
@@ -48,3 +48,37 @@ class TeamViewTest(TestCase):
         team = Team.objects.create()
         response = self.client.get(f'/doublepower/team/{team.id}')
         self.assertTemplateUsed(response, 'doublepower/team.html')
+
+    def test_can_save_a_POST_request_to_existing_team(self):
+        team = Team.objects.create()
+        Player.objects.create(team=team, name='Roger')
+        Player.objects.create(team=team, name='Rafa')
+        self.assertEqual(Player.objects.count(), 2)
+        response = self.client.post(
+            f'/doublepower/team/{team.id}',
+            data={
+                'name': 'Novak',
+                'forehand_strength': 96,
+                'backhand_strength': 67,
+            }
+        )
+        self.assertEqual(Player.objects.count(), 3)
+        new_player = Player.objects.last()
+        self.assertEqual(new_player.name, 'Novak')
+
+    def test_displays_all_players(self):
+        correct_team = Team.objects.create()
+        Player.objects.create(team=correct_team, name='Roger')
+        Player.objects.create(team=correct_team, name='Rafa')
+        Player.objects.create(team=correct_team, name='Novak')
+        other_team = Team.objects.create()
+        Player.objects.create(team=other_team, name='Ronaldo')
+        Player.objects.create(team=other_team, name='Messi')
+
+        response = self.client.get(f'/doublepower/team/{correct_team.id}')
+        self.assertContains(response, 'Roger')
+        self.assertContains(response, 'Rafa')
+        self.assertContains(response, 'Novak')
+        self.assertNotContains(response, 'Ronaldo')
+        self.assertNotContains(response, 'Messi')
+

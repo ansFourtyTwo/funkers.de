@@ -27,3 +27,14 @@ class PlayerForm(forms.ModelForm):
                 'step': 1,
             })
         }
+
+
+class ExistingTeamPlayerForm(PlayerForm):
+
+    def __init__(self, team, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.instance.team = team
+
+
+
+
