@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from doublepower.models import Player
+from doublepower.models import Player, Team
 
 
 class PlayerModelTest(TestCase):
@@ -21,3 +21,13 @@ class PlayerModelTest(TestCase):
     def test_default_player_backhand_strength(self):
         player = Player()
         self.assertEqual(player.backhand_strength, 50)
+
+
+class TeamModelTest(TestCase):
+
+    def test_get_absolute_url(self):
+        team = Team.objects.create()
+        self.assertEqual(
+            team.get_absolute_url(),
+            f'/doublepower/team/{team.id}'
+        )
