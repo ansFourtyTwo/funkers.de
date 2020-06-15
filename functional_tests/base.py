@@ -1,5 +1,6 @@
 import time
 from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import WebDriverException
 
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
@@ -28,3 +29,29 @@ class FunctionalTest(StaticLiveServerTestCase):
                 if time.time() - start_time > MAX_WAIT:
                     raise e
                 time.sleep(0.5)
+
+    def enter_player(self, name, forehand_strength, backhand_strength):
+
+        def set_strength(input_element, set_point):
+            default_value = 50
+            key = Keys.ARROW_UP if set_point > default_value else \
+                Keys.ARROW_DOWN
+            for _ in range(abs(set_point-default_value)):
+                input_element.send_keys(key)
+
+        input_player_name = self.browser.find_element_by_id('id_name')
+        input_player_name.send_keys(name)
+
+        input_forehand_strength = self.browser.find_element_by_id(
+            'id_forehand_strength')
+        set_strength(input_forehand_strength, forehand_strength)
+
+        input_backhand_strength = self.browser.find_element_by_id(
+            'id_backhand_strength')
+        set_strength(input_backhand_strength, backhand_strength)
+
+        submit_button = self.browser.find_element_by_xpath(
+            "//input[@type='submit' and @value='Submit']"
+        )
+        submit_button.click()
+
