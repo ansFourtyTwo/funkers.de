@@ -35,6 +35,8 @@ class ExistingTeamPlayerForm(PlayerForm):
         super().__init__(*args, **kwargs)
         self.instance.team = team
 
+    def save(self):
+        return forms.models.ModelForm.save(self)
 
 
 

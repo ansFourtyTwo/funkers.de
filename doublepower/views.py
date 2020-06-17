@@ -27,7 +27,7 @@ def view_team(request, team_id):
     if request.method == 'POST':
         form = ExistingTeamPlayerForm(team=team, data=request.POST)
         if form.is_valid():
-            form.save(team=team)
+            form.save()
             return redirect(team)
 
     return render(
