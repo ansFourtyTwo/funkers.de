@@ -14,7 +14,7 @@
     <table id="id_player_table">
         {% for player in team.player_set.all %}
         <tr>
-            <td>{{ forloop.counter }}</td>
+            <td>{{ player.rank }}</td>
             <td>{{ player.name }}</td>
             <td>{{ player.forehand_strength }}</td>
             <td>{{ player.backhand_strength }}</td>

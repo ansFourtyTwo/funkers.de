@@ -30,6 +30,25 @@ class PlayerModelTest(TestCase):
         player = Player()
         self.assertEqual(player.backhand_strength, 50)
 
+    def test_default_player_rank(self):
+        player = Player()
+        self.assertEqual(player.rank, 1)
+
+    def test_saving_player_adds_rank_attribute_correctly(self):
+        team = Team.objects.create()
+        player1 = Player.objects.create(team=team)
+        player2 = Player.objects.create(team=team)
+        self.assertEqual(player1.rank, 1)
+        self.assertEqual(player2.rank, 2)
+
+    def test_updating_player_does_not_change_rank(self):
+        team = Team.objects.create()
+        player1 = Player.objects.create(team=team)
+        _ = Player.objects.create(team=team)
+        player1.name = 'Pete Sampras'
+        player1.save()
+        self.assertEqual(player1.rank, 1)
+
 
 class TeamModelTest(TestCase):
 

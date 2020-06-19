@@ -3,6 +3,7 @@ from django.urls import reverse
 
 
 class Player(models.Model):
+    rank = models.PositiveIntegerField(default=1)
     name = models.TextField(default='')
     forehand_strength = models.IntegerField(default=50)
     backhand_strength = models.IntegerField(default=50)
