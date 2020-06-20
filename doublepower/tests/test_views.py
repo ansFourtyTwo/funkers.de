@@ -104,27 +104,59 @@ class TestMovePlayerUp(TestCase):
     def test_POST_can_move_players_up_in_team(self):
         team = Team.objects.create()
         Player.objects.create(team=team, name='Roger')
-        Player.objects.create(team=team, name='Rafa')
         player = Player.objects.create(team=team, name='Novak')
-        self.assertEqual(player.rank, 3)
+        self.assertEqual(player.rank, 2)
 
         _ = self.client.post(
             f'/doublepower/team/{team.id}/player_up/{player.id}')
 
         player.refresh_from_db()
-        self.assertEqual(player.rank, 2)
+        self.assertEqual(player.rank, 1)
 
     def test_cannot_move_rank_up_of_player_with_rank_1(self):
         team = Team.objects.create()
-        player1 = Player.objects.create(team=team, name='Roger')
-        player2 = Player.objects.create(team=team, name='Rafa')
+        player = Player.objects.create(team=team, name='Roger')
+        Player.objects.create(team=team, name='Rafa')
 
         _ = self.client.post(
-            f'/doublepower/team/{team.id}/player_up/{player1.id}')
+            f'/doublepower/team/{team.id}/player_up/{player.id}')
 
-        player1.refresh_from_db()
-        self.assertEqual(player1.rank, 1)
+        player.refresh_from_db()
+        self.assertEqual(player.rank, 1)
 
 
+class TestMovePlayerDown(TestCase):
+
+    def test_POST_redirects_to_team_view(self):
+        team = Team.objects.create()
+        player = Player.objects.create(team=team, name='Roger')
+
+        response = self.client.post(
+            f'/doublepower/team/{team.id}/player_down/{player.id}')
+
+        self.assertRedirects(response, f'/doublepower/team/{team.id}')
+
+    def test_POST_can_move_players_down_in_team(self):
+        team = Team.objects.create()
+        player = Player.objects.create(team=team, name='Roger')
+        Player.objects.create(team=team, name='Rafa')
+        self.assertEqual(player.rank, 1)
+
+        _ = self.client.post(
+            f'/doublepower/team/{team.id}/player_down/{player.id}')
+
+        player.refresh_from_db()
+        self.assertEqual(player.rank, 2)
+
+    def test_cannot_move_rank_down_of_player_with_lowest_rank(self):
+        team = Team.objects.create()
+        Player.objects.create(team=team, name='Roger')
+        player = Player.objects.create(team=team, name='Rafa')
+
+        _ = self.client.post(
+            f'/doublepower/team/{team.id}/player_down/{player.id}')
+
+        player.refresh_from_db()
+        self.assertEqual(player.rank, 2)
 
 

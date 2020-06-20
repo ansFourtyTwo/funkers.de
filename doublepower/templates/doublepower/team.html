@@ -24,6 +24,12 @@
                     <input type="submit" name="action" value="Up">
                 </form>
             </td>
+            <td>
+                <form method="POST" action="{% url 'doublepower:player_down' team.id player.id %}">
+                    {% csrf_token %}
+                    <input type="submit" name="action" value="Down">
+                </form>
+            </td>
         </tr>
         {% endfor %}
     </table>
