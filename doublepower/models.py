@@ -13,6 +13,9 @@ class Player(models.Model):
         default=None
     )
 
+    class Meta:
+        ordering = ('rank',)
+
 
 class Team(models.Model):
 
