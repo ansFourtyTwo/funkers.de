@@ -27,23 +27,18 @@ class TeamManipulationTest(FunctionalTest):
             backhand_strength=90,
         )
 
-        # He notices, that the players are ranked how they were entered
-        self.wait_for_row_in_player_table('1 Raphael Nadal 65 86')
-        self.wait_for_row_in_player_table('2 Roger Federer 95 70')
-        self.wait_for_row_in_player_table('3 Novak Djokovic 80 90')
+        # Initial ranking is:
+        # 1 Raphael Nadal
+        # 2 Roger Federer
+        # 3 Novak Djokovic
 
         # Unfortunately this is not the real ranking order, but wait,
         # there is help: Beside the players in the he finds buttons for each
         # player, which he can use to manipulate the ranking
-        table = self.browser.find_element_by_id('id_player_table')
-        rows = table.find_elements_by_tag_name('tr')
 
         # Simon clicks on the "UP" button next to Novak Djokovic to bring him
         # up in the ranking
-        for row in rows:
-            if 'Novak Djokovic' in row.text:
-                up_button = row.find_element_by_xpath(".//input[@value='Up']")
-                up_button.click()
+        self.rank_player_up_button('Novak Djokovic').click()
 
         # He notices, that Novak Djokovic has moved up on position in the
         # ranking
@@ -51,4 +46,25 @@ class TeamManipulationTest(FunctionalTest):
         self.wait_for_row_in_player_table('2 Novak Djokovic 80 90')
         self.wait_for_row_in_player_table('3 Roger Federer 95 70')
 
-        self.fail("Finish me! Development driven tests here ;)!")
+        # Still Novak isn't in first position, rank him up!!
+        self.rank_player_up_button('Novak Djokovic').click()
+
+        # There we go, Novak is at the top
+        self.wait_for_row_in_player_table('1 Novak Djokovic 80 90')
+        self.wait_for_row_in_player_table('2 Raphael Nadal 65 86')
+        self.wait_for_row_in_player_table('3 Roger Federer 95 70')
+
+        # Bring him up to heaven ...
+        self.rank_player_up_button('Novak Djokovic').click()
+
+        # Nope! There is nothing better than rank 1.
+        self.wait_for_row_in_player_table('1 Novak Djokovic 80 90')
+
+        # One final thing to do. Nadal is not as good as Federer. Rank him
+        # down to rank 3.
+        self.rank_player_down_button('Raphael Nadal').click()
+
+        # Perfect. Federer is now rank 2, Nadal is only on rank 3
+        self.wait_for_row_in_player_table('2 Roger Federer 95 70')
+        self.wait_for_row_in_player_table('3 Raphael Nadal 65 86')
+

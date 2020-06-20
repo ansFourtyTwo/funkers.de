@@ -55,3 +55,18 @@ class FunctionalTest(StaticLiveServerTestCase):
         )
         submit_button.click()
 
+    def rank_player_up_button(self, name):
+        table = self.browser.find_element_by_id('id_player_table')
+        rows = table.find_elements_by_tag_name('tr')
+        for row in rows:
+            if name in row.text:
+                return row.find_element_by_xpath(".//input[@value='Up']")
+        return None
+
+    def rank_player_down_button(self, name):
+        table = self.browser.find_element_by_id('id_player_table')
+        rows = table.find_elements_by_tag_name('tr')
+        for row in rows:
+            if name in row.text:
+                return row.find_element_by_xpath(".//input[@value='Down']")
+        return None
