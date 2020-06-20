@@ -9,11 +9,13 @@ class HomeTest(TestCase):
 
     def test_uses_home_template(self):
         response = self.client.get(reverse('doublepower:home'))
+
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'doublepower/home.html')
 
     def test_home_uses_player_form(self):
         response = self.client.get(reverse('doublepower:home'))
+
         self.assertIsInstance(response.context['player_form'], PlayerForm)
 
     def test_can_save_a_POST_request(self):
@@ -46,7 +48,9 @@ class TeamViewTest(TestCase):
 
     def test_team_view_uses_team_template(self):
         team = Team.objects.create()
+
         response = self.client.get(f'/doublepower/team/{team.id}')
+
         self.assertTemplateUsed(response, 'doublepower/team.html')
 
     def test_can_save_a_POST_request_to_existing_team(self):
@@ -54,6 +58,7 @@ class TeamViewTest(TestCase):
         Player.objects.create(team=team, name='Roger')
         Player.objects.create(team=team, name='Rafa')
         self.assertEqual(Player.objects.count(), 2)
+
         response = self.client.post(
             f'/doublepower/team/{team.id}',
             data={
@@ -62,6 +67,7 @@ class TeamViewTest(TestCase):
                 'backhand_strength': 67,
             }
         )
+
         self.assertEqual(Player.objects.count(), 3)
         new_player = Player.objects.last()
         self.assertEqual(new_player.name, 'Novak')
@@ -76,9 +82,49 @@ class TeamViewTest(TestCase):
         Player.objects.create(team=other_team, name='Messi')
 
         response = self.client.get(f'/doublepower/team/{correct_team.id}')
+
         self.assertContains(response, 'Roger')
         self.assertContains(response, 'Rafa')
         self.assertContains(response, 'Novak')
         self.assertNotContains(response, 'Ronaldo')
         self.assertNotContains(response, 'Messi')
+
+
+class TestMovePlayerUp(TestCase):
+
+    def test_POST_redirects_to_team_view(self):
+        team = Team.objects.create()
+        player = Player.objects.create(team=team, name='Roger')
+
+        response = self.client.post(
+            f'/doublepower/team/{team.id}/player_up/{player.id}')
+
+        self.assertRedirects(response, f'/doublepower/team/{team.id}')
+
+    def test_POST_can_move_players_up_in_team(self):
+        team = Team.objects.create()
+        Player.objects.create(team=team, name='Roger')
+        Player.objects.create(team=team, name='Rafa')
+        player = Player.objects.create(team=team, name='Novak')
+        self.assertEqual(player.rank, 3)
+
+        _ = self.client.post(
+            f'/doublepower/team/{team.id}/player_up/{player.id}')
+
+        player.refresh_from_db()
+        self.assertEqual(player.rank, 2)
+
+    def test_cannot_move_rank_up_of_player_with_rank_1(self):
+        team = Team.objects.create()
+        player1 = Player.objects.create(team=team, name='Roger')
+        player2 = Player.objects.create(team=team, name='Rafa')
+
+        _ = self.client.post(
+            f'/doublepower/team/{team.id}/player_up/{player1.id}')
+
+        player1.refresh_from_db()
+        self.assertEqual(player1.rank, 1)
+
+
+
 

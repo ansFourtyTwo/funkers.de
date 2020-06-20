@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect
+from django.db import transaction
 
 from .forms import PlayerForm, ExistingTeamPlayerForm
-from .models import Team
+from .models import Team, Player
 
 
 def home(request):
@@ -38,3 +39,18 @@ def view_team(request, team_id):
             'player_form': form,
          }
     )
+
+
+def player_up(request, team_id, player_id):
+    team = Team.objects.get(pk=team_id)
+    upranked_player = Player.objects.get(pk=player_id)
+    if not upranked_player.rank == 1:
+        downranked_player = Player.objects.get(
+            team=team,
+            rank=(upranked_player.rank - 1)
+        )
+        upranked_player.rank -= 1
+        downranked_player.rank += 1
+        Player.objects.bulk_update([upranked_player, downranked_player], ['rank'])
+
+    return redirect(team)
