@@ -30,6 +30,12 @@
                     <input type="submit" name="action" value="Down">
                 </form>
             </td>
+            <td>
+                <form method="POST" action="{% url 'doublepower:player_delete' team.id player.id %}">
+                    {% csrf_token %}
+                    <input type="submit" name="action" value="Delete">
+                </form>
+            </td>
         </tr>
         {% endfor %}
     </table>

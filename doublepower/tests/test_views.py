@@ -160,3 +160,40 @@ class TestMovePlayerDown(TestCase):
         self.assertEqual(player.rank, 2)
 
 
+class TestDeletePlayer(TestCase):
+
+    def test_POST_redirects_to_team_view_if_players_left(self):
+        team = Team.objects.create()
+        Player.objects.create(team=team, name='Rafa')
+        player = Player.objects.create(team=team, name='Roger')
+
+        response = self.client.post(
+            f'/doublepower/team/{team.id}/player_delete/{player.id}')
+
+        self.assertRedirects(response, f'/doublepower/team/{team.id}')
+
+    def test_POST_redirects_to_home_view_if_no_players_left(self):
+        team = Team.objects.create()
+        player = Player.objects.create(team=team, name='Roger')
+
+        response = self.client.post(
+            f'/doublepower/team/{team.id}/player_delete/{player.id}')
+
+        self.assertRedirects(response, f'/doublepower/')
+
+    def test_POST_updates_ranks_of_remaining_players_correctly(self):
+        team = Team.objects.create()
+        player1 = Player.objects.create(team=team, name='Novak')
+        player2 = Player.objects.create(team=team, name='Roger')
+        player3 = Player.objects.create(team=team, name='Rafa')
+        player4 = Player.objects.create(team=team, name='Pete')
+
+        _ = self.client.post(
+            f'/doublepower/team/{team.id}/player_delete/{player2.id}')
+
+        player1.refresh_from_db()
+        player3.refresh_from_db()
+        player4.refresh_from_db()
+        self.assertEqual(player1.rank, 1)
+        self.assertEqual(player3.rank, 2)
+        self.assertEqual(player4.rank, 3)

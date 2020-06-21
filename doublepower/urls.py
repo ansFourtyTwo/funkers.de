@@ -22,8 +22,20 @@ urlpatterns = [
     path('', views.home, name='home'),
     path('team/new', views.new_team, name='new_team'),
     path('team/<int:team_id>', views.view_team, name='view_team'),
-    path('team/<int:team_id>/player_up/<int:player_id>', views.player_up,
-         name='player_up'),
-    path('team/<int:team_id>/player_down/<int:player_id>', views.player_down,
-         name='player_down')
+    path(
+        'team/<int:team_id>/player_up/<int:player_id>',
+        views.player_up,
+        name='player_up'
+    ),
+    path(
+        'team/<int:team_id>/player_down/<int:player_id>',
+        views.player_down,
+        name='player_down'
+    ),
+    path(
+        'team/<int:team_id>/player_delete/<int:player_id>',
+        views.player_delete,
+        name='player_delete'
+    ),
+
 ]
